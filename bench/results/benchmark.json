@@ -1,0 +1,709 @@
+{
+  "runs": [
+    {
+      "timestamp": "2026-08-01T00:12:28",
+      "config": {
+        "requests": 2000,
+        "concurrency": 50,
+        "herd_size": 50,
+        "upstream_mean_ms": 200,
+        "upstream_model": "log-normal latency, instrumented call counter"
+      },
+      "scenarios": [
+        {
+          "scenario": "baseline_no_cache",
+          "concurrency": 50,
+          "requests": 2000,
+          "errors": 0,
+          "wall_s": 10.622,
+          "throughput_rps": 188.29,
+          "mean_ms": 258.87,
+          "p50_ms": 247.56,
+          "p95_ms": 407.45,
+          "p99_ms": 499.65,
+          "max_ms": 649.92,
+          "gateway_stats": {
+            "requests": 2000,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 2000,
+            "hit_rate": 0.0,
+            "upstream_calls": 2000,
+            "upstream_calls_avoided": 0,
+            "tokens_served": 133517,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 0,
+            "semantic_index_size": 0,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          },
+          "upstream_calls_observed": 2000
+        },
+        {
+          "scenario": "thundering_herd_no_coalescing",
+          "concurrent_identical_requests": 50,
+          "requests": 50,
+          "errors": 0,
+          "wall_s": 0.489,
+          "throughput_rps": 102.23,
+          "mean_ms": 293.16,
+          "p50_ms": 299.18,
+          "p95_ms": 417.31,
+          "p99_ms": 464.06,
+          "max_ms": 470.76,
+          "upstream_calls": 50,
+          "upstream_call_reduction_pct": 0.0,
+          "coalesced_followers": 0,
+          "gateway_stats": {
+            "requests": 50,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 50,
+            "hit_rate": 0.0,
+            "upstream_calls": 50,
+            "upstream_calls_avoided": 0,
+            "tokens_served": 2900,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 0,
+            "semantic_index_size": 0,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          }
+        },
+        {
+          "scenario": "infergate_cached",
+          "concurrency": 50,
+          "requests": 2000,
+          "errors": 0,
+          "wall_s": 4.745,
+          "throughput_rps": 421.5,
+          "mean_ms": 112.49,
+          "p50_ms": 99.6,
+          "p95_ms": 189.8,
+          "p99_ms": 362.64,
+          "max_ms": 672.39,
+          "gateway_stats": {
+            "requests": 2000,
+            "cache_hits": 1915,
+            "exact_hits": 1370,
+            "semantic_hits": 545,
+            "misses": 85,
+            "hit_rate": 0.9575,
+            "upstream_calls": 48,
+            "upstream_calls_avoided": 1952,
+            "tokens_served": 3180,
+            "tokens_saved": 124405,
+            "estimated_usd_saved": 0.073399,
+            "coalesced_followers": 37,
+            "semantic_index_size": 48,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          },
+          "upstream_calls_observed": 48
+        },
+        {
+          "scenario": "thundering_herd",
+          "concurrent_identical_requests": 50,
+          "requests": 50,
+          "errors": 0,
+          "wall_s": 0.232,
+          "throughput_rps": 215.11,
+          "mean_ms": 200.58,
+          "p50_ms": 199.93,
+          "p95_ms": 221.86,
+          "p99_ms": 229.68,
+          "max_ms": 230.17,
+          "upstream_calls": 1,
+          "upstream_call_reduction_pct": 98.0,
+          "coalesced_followers": 49,
+          "gateway_stats": {
+            "requests": 50,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 50,
+            "hit_rate": 0.0,
+            "upstream_calls": 1,
+            "upstream_calls_avoided": 49,
+            "tokens_served": 58,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 49,
+            "semantic_index_size": 49,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          }
+        },
+        {
+          "scenario": "failover",
+          "requests": 60,
+          "errors": 0,
+          "wall_s": 0.479,
+          "throughput_rps": 125.33,
+          "mean_ms": 62.55,
+          "p50_ms": 5.05,
+          "p95_ms": 383.55,
+          "p99_ms": 448.94,
+          "max_ms": 475.86,
+          "provider_failovers": 10,
+          "breaker_states": [
+            {
+              "provider": "primary",
+              "state": "open",
+              "failures": 10,
+              "trips": 1,
+              "upstream_calls": 10
+            },
+            {
+              "provider": "secondary",
+              "state": "closed",
+              "failures": 0,
+              "trips": 0,
+              "upstream_calls": 10
+            }
+          ],
+          "availability_pct": 100.0
+        }
+      ],
+      "comparison": {
+        "baseline_p50_ms": 247.56,
+        "baseline_p95_ms": 407.45,
+        "baseline_p99_ms": 499.65,
+        "baseline_rps": 188.29,
+        "cached_p50_ms": 99.6,
+        "cached_p95_ms": 189.8,
+        "cached_p99_ms": 362.64,
+        "cached_rps": 421.5,
+        "baseline_upstream_calls": 2000,
+        "cached_upstream_calls": 48,
+        "p50_latency_reduction_pct": 59.8,
+        "p95_latency_reduction_pct": 53.4,
+        "p99_latency_reduction_pct": 27.4,
+        "throughput_gain_pct": 123.9,
+        "upstream_call_reduction_pct": 97.6,
+        "cache_hit_rate": 0.9575,
+        "tokens_avoided": 124405,
+        "herd_upstream_calls_before": 50,
+        "herd_upstream_calls_after": 1
+      }
+    },
+    {
+      "timestamp": "2026-08-01T00:12:56",
+      "config": {
+        "requests": 2000,
+        "concurrency": 50,
+        "herd_size": 50,
+        "upstream_mean_ms": 200,
+        "upstream_model": "log-normal latency, instrumented call counter"
+      },
+      "scenarios": [
+        {
+          "scenario": "baseline_no_cache",
+          "concurrency": 50,
+          "requests": 2000,
+          "errors": 0,
+          "wall_s": 10.192,
+          "throughput_rps": 196.23,
+          "mean_ms": 249.64,
+          "p50_ms": 238.34,
+          "p95_ms": 393.93,
+          "p99_ms": 485.18,
+          "max_ms": 699.94,
+          "gateway_stats": {
+            "requests": 2000,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 2000,
+            "hit_rate": 0.0,
+            "upstream_calls": 2000,
+            "upstream_calls_avoided": 0,
+            "tokens_served": 133517,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 0,
+            "semantic_index_size": 0,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          },
+          "upstream_calls_observed": 2000
+        },
+        {
+          "scenario": "thundering_herd_no_coalescing",
+          "concurrent_identical_requests": 50,
+          "requests": 50,
+          "errors": 0,
+          "wall_s": 0.58,
+          "throughput_rps": 86.18,
+          "mean_ms": 303.76,
+          "p50_ms": 308.3,
+          "p95_ms": 448.76,
+          "p99_ms": 539.45,
+          "max_ms": 578.01,
+          "upstream_calls": 50,
+          "upstream_call_reduction_pct": 0.0,
+          "coalesced_followers": 0,
+          "gateway_stats": {
+            "requests": 50,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 50,
+            "hit_rate": 0.0,
+            "upstream_calls": 50,
+            "upstream_calls_avoided": 0,
+            "tokens_served": 2900,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 0,
+            "semantic_index_size": 0,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          }
+        },
+        {
+          "scenario": "infergate_cached",
+          "concurrency": 50,
+          "requests": 2000,
+          "errors": 0,
+          "wall_s": 4.707,
+          "throughput_rps": 424.86,
+          "mean_ms": 111.51,
+          "p50_ms": 98.86,
+          "p95_ms": 187.75,
+          "p99_ms": 385.99,
+          "max_ms": 567.95,
+          "gateway_stats": {
+            "requests": 2000,
+            "cache_hits": 1924,
+            "exact_hits": 1329,
+            "semantic_hits": 595,
+            "misses": 76,
+            "hit_rate": 0.962,
+            "upstream_calls": 43,
+            "upstream_calls_avoided": 1957,
+            "tokens_served": 2848,
+            "tokens_saved": 124525,
+            "estimated_usd_saved": 0.07347,
+            "coalesced_followers": 33,
+            "semantic_index_size": 43,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          },
+          "upstream_calls_observed": 43
+        },
+        {
+          "scenario": "thundering_herd",
+          "concurrent_identical_requests": 50,
+          "requests": 50,
+          "errors": 0,
+          "wall_s": 0.212,
+          "throughput_rps": 235.89,
+          "mean_ms": 189.51,
+          "p50_ms": 192.53,
+          "p95_ms": 202.29,
+          "p99_ms": 207.45,
+          "max_ms": 209.58,
+          "upstream_calls": 1,
+          "upstream_call_reduction_pct": 98.0,
+          "coalesced_followers": 49,
+          "gateway_stats": {
+            "requests": 50,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 50,
+            "hit_rate": 0.0,
+            "upstream_calls": 1,
+            "upstream_calls_avoided": 49,
+            "tokens_served": 58,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 49,
+            "semantic_index_size": 44,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          }
+        },
+        {
+          "scenario": "failover",
+          "requests": 60,
+          "errors": 0,
+          "wall_s": 0.469,
+          "throughput_rps": 127.97,
+          "mean_ms": 62.6,
+          "p50_ms": 6.06,
+          "p95_ms": 372.59,
+          "p99_ms": 429.27,
+          "max_ms": 465.82,
+          "provider_failovers": 10,
+          "breaker_states": [
+            {
+              "provider": "primary",
+              "state": "open",
+              "failures": 10,
+              "trips": 1,
+              "upstream_calls": 10
+            },
+            {
+              "provider": "secondary",
+              "state": "closed",
+              "failures": 0,
+              "trips": 0,
+              "upstream_calls": 10
+            }
+          ],
+          "availability_pct": 100.0
+        }
+      ],
+      "comparison": {
+        "baseline_p50_ms": 238.34,
+        "baseline_p95_ms": 393.93,
+        "baseline_p99_ms": 485.18,
+        "baseline_rps": 196.23,
+        "cached_p50_ms": 98.86,
+        "cached_p95_ms": 187.75,
+        "cached_p99_ms": 385.99,
+        "cached_rps": 424.86,
+        "baseline_upstream_calls": 2000,
+        "cached_upstream_calls": 43,
+        "p50_latency_reduction_pct": 58.5,
+        "p95_latency_reduction_pct": 52.3,
+        "p99_latency_reduction_pct": 20.4,
+        "throughput_gain_pct": 116.5,
+        "upstream_call_reduction_pct": 97.9,
+        "cache_hit_rate": 0.962,
+        "tokens_avoided": 124525,
+        "herd_upstream_calls_before": 50,
+        "herd_upstream_calls_after": 1
+      }
+    },
+    {
+      "timestamp": "2026-08-01T00:13:20",
+      "config": {
+        "requests": 2000,
+        "concurrency": 50,
+        "herd_size": 50,
+        "upstream_mean_ms": 200,
+        "upstream_model": "log-normal latency, instrumented call counter"
+      },
+      "scenarios": [
+        {
+          "scenario": "baseline_no_cache",
+          "concurrency": 50,
+          "requests": 2000,
+          "errors": 0,
+          "wall_s": 9.706,
+          "throughput_rps": 206.06,
+          "mean_ms": 239.02,
+          "p50_ms": 227.39,
+          "p95_ms": 388.1,
+          "p99_ms": 464.84,
+          "max_ms": 784.03,
+          "gateway_stats": {
+            "requests": 2000,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 2000,
+            "hit_rate": 0.0,
+            "upstream_calls": 2000,
+            "upstream_calls_avoided": 0,
+            "tokens_served": 133517,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 0,
+            "semantic_index_size": 0,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          },
+          "upstream_calls_observed": 2000
+        },
+        {
+          "scenario": "thundering_herd_no_coalescing",
+          "concurrent_identical_requests": 50,
+          "requests": 50,
+          "errors": 0,
+          "wall_s": 0.548,
+          "throughput_rps": 91.28,
+          "mean_ms": 314.98,
+          "p50_ms": 312.27,
+          "p95_ms": 435.12,
+          "p99_ms": 532.34,
+          "max_ms": 536.15,
+          "upstream_calls": 50,
+          "upstream_call_reduction_pct": 0.0,
+          "coalesced_followers": 0,
+          "gateway_stats": {
+            "requests": 50,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 50,
+            "hit_rate": 0.0,
+            "upstream_calls": 50,
+            "upstream_calls_avoided": 0,
+            "tokens_served": 2900,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 0,
+            "semantic_index_size": 0,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          }
+        },
+        {
+          "scenario": "infergate_cached",
+          "concurrency": 50,
+          "requests": 2000,
+          "errors": 0,
+          "wall_s": 5.34,
+          "throughput_rps": 374.52,
+          "mean_ms": 126.55,
+          "p50_ms": 114.73,
+          "p95_ms": 164.95,
+          "p99_ms": 398.06,
+          "max_ms": 734.94,
+          "gateway_stats": {
+            "requests": 2000,
+            "cache_hits": 1929,
+            "exact_hits": 1336,
+            "semantic_hits": 593,
+            "misses": 71,
+            "hit_rate": 0.9645,
+            "upstream_calls": 43,
+            "upstream_calls_avoided": 1957,
+            "tokens_served": 2845,
+            "tokens_saved": 124803,
+            "estimated_usd_saved": 0.073634,
+            "coalesced_followers": 28,
+            "semantic_index_size": 43,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          },
+          "upstream_calls_observed": 43
+        },
+        {
+          "scenario": "thundering_herd",
+          "concurrent_identical_requests": 50,
+          "requests": 50,
+          "errors": 0,
+          "wall_s": 0.32,
+          "throughput_rps": 156.16,
+          "mean_ms": 299.79,
+          "p50_ms": 300.27,
+          "p95_ms": 310.71,
+          "p99_ms": 312.8,
+          "max_ms": 313.77,
+          "upstream_calls": 1,
+          "upstream_call_reduction_pct": 98.0,
+          "coalesced_followers": 49,
+          "gateway_stats": {
+            "requests": 50,
+            "cache_hits": 0,
+            "exact_hits": 0,
+            "semantic_hits": 0,
+            "misses": 50,
+            "hit_rate": 0.0,
+            "upstream_calls": 1,
+            "upstream_calls_avoided": 49,
+            "tokens_served": 58,
+            "tokens_saved": 0,
+            "estimated_usd_saved": 0.0,
+            "coalesced_followers": 49,
+            "semantic_index_size": 44,
+            "provider_failovers": 0,
+            "rate_limited": 0,
+            "backend": "redis"
+          }
+        },
+        {
+          "scenario": "failover",
+          "requests": 60,
+          "errors": 0,
+          "wall_s": 0.411,
+          "throughput_rps": 146.0,
+          "mean_ms": 51.27,
+          "p50_ms": 3.54,
+          "p95_ms": 331.69,
+          "p99_ms": 381.77,
+          "max_ms": 407.58,
+          "provider_failovers": 10,
+          "breaker_states": [
+            {
+              "provider": "primary",
+              "state": "open",
+              "failures": 10,
+              "trips": 1,
+              "upstream_calls": 10
+            },
+            {
+              "provider": "secondary",
+              "state": "closed",
+              "failures": 0,
+              "trips": 0,
+              "upstream_calls": 10
+            }
+          ],
+          "availability_pct": 100.0
+        }
+      ],
+      "comparison": {
+        "baseline_p50_ms": 227.39,
+        "baseline_p95_ms": 388.1,
+        "baseline_p99_ms": 464.84,
+        "baseline_rps": 206.06,
+        "cached_p50_ms": 114.73,
+        "cached_p95_ms": 164.95,
+        "cached_p99_ms": 398.06,
+        "cached_rps": 374.52,
+        "baseline_upstream_calls": 2000,
+        "cached_upstream_calls": 43,
+        "p50_latency_reduction_pct": 49.5,
+        "p95_latency_reduction_pct": 57.5,
+        "p99_latency_reduction_pct": 14.4,
+        "throughput_gain_pct": 81.8,
+        "upstream_call_reduction_pct": 97.9,
+        "cache_hit_rate": 0.9645,
+        "tokens_avoided": 124803,
+        "herd_upstream_calls_before": 50,
+        "herd_upstream_calls_after": 1
+      }
+    }
+  ],
+  "aggregate": {
+    "timestamp": "2026-08-01T00:13:44",
+    "repetitions": 3,
+    "config": {
+      "requests": 2000,
+      "concurrency": 50,
+      "herd_size": 50,
+      "upstream_mean_ms": 200,
+      "upstream_model": "log-normal latency, instrumented call counter"
+    },
+    "metrics": {
+      "baseline_p50_ms": {
+        "median": 238.34,
+        "min": 227.39,
+        "max": 247.56
+      },
+      "baseline_p95_ms": {
+        "median": 393.93,
+        "min": 388.1,
+        "max": 407.45
+      },
+      "baseline_p99_ms": {
+        "median": 485.18,
+        "min": 464.84,
+        "max": 499.65
+      },
+      "baseline_rps": {
+        "median": 196.23,
+        "min": 188.29,
+        "max": 206.06
+      },
+      "cached_p50_ms": {
+        "median": 99.6,
+        "min": 98.86,
+        "max": 114.73
+      },
+      "cached_p95_ms": {
+        "median": 187.75,
+        "min": 164.95,
+        "max": 189.8
+      },
+      "cached_p99_ms": {
+        "median": 385.99,
+        "min": 362.64,
+        "max": 398.06
+      },
+      "cached_rps": {
+        "median": 421.5,
+        "min": 374.52,
+        "max": 424.86
+      },
+      "baseline_upstream_calls": {
+        "median": 2000,
+        "min": 2000,
+        "max": 2000
+      },
+      "cached_upstream_calls": {
+        "median": 43,
+        "min": 43,
+        "max": 48
+      },
+      "p50_latency_reduction_pct": {
+        "median": 58.5,
+        "min": 49.5,
+        "max": 59.8
+      },
+      "p95_latency_reduction_pct": {
+        "median": 53.4,
+        "min": 52.3,
+        "max": 57.5
+      },
+      "p99_latency_reduction_pct": {
+        "median": 20.4,
+        "min": 14.4,
+        "max": 27.4
+      },
+      "throughput_gain_pct": {
+        "median": 116.5,
+        "min": 81.8,
+        "max": 123.9
+      },
+      "upstream_call_reduction_pct": {
+        "median": 97.9,
+        "min": 97.6,
+        "max": 97.9
+      },
+      "cache_hit_rate": {
+        "median": 0.96,
+        "min": 0.96,
+        "max": 0.96
+      },
+      "tokens_avoided": {
+        "median": 124525,
+        "min": 124405,
+        "max": 124803
+      },
+      "herd_upstream_calls_before": {
+        "median": 50,
+        "min": 50,
+        "max": 50
+      },
+      "herd_upstream_calls_after": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      }
+    },
+    "failover_availability_pct_min": 100.0,
+    "headline": {
+      "p50_latency_reduction": "58.5%",
+      "p95_latency_reduction": "53.4%",
+      "p99_latency_reduction": "20.4%",
+      "throughput_gain": "116.5%",
+      "upstream_call_reduction": "97.9%",
+      "cache_hit_rate": 0.96,
+      "tokens_avoided": 124525,
+      "herd_upstream_calls": "50 -> 1",
+      "failover_availability_min": "100.0%"
+    }
+  }
+}

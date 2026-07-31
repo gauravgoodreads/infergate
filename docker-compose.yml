@@ -1,0 +1,58 @@
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Three stateless replicas. Cache and coalescing state lives in Redis, so any
+  # replica can serve a request another replica populated.
+  gateway:
+    build: .
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      REDIS_REQUIRED: "true"
+      UPSTREAM_URL: http://mock-primary:9100/v1/complete
+      UPSTREAM_FALLBACK_URL: http://mock-secondary:9101/v1/complete
+      SEMANTIC_THRESHOLD: "0.80"
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      replicas: 3
+    expose:
+      - "8080"
+
+  nginx:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:8080"
+    depends_on:
+      - gateway
+
+  mock-primary:
+    build: .
+    command: ["python", "-m", "bench.mock_upstream", "--port", "9100", "--mean-ms", "200"]
+    expose:
+      - "9100"
+
+  mock-secondary:
+    build: .
+    command: ["python", "-m", "bench.mock_upstream", "--port", "9101", "--mean-ms", "260"]
+    expose:
+      - "9101"
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - nginx
