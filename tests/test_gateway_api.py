@@ -1,5 +1,6 @@
 """End-to-end API tests against a stubbed provider (no network)."""
-import httpx
+import uuid
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -44,34 +45,46 @@ def client():
         yield c
 
 
+@pytest.fixture()
+def fresh_prompt():
+    """
+    A prompt guaranteed never to have been cached.
+
+    Redis outlives the test process, so a hardcoded prompt would be a warm cache
+    hit on the second run and the "first call misses" assertion would fail for a
+    reason that has nothing to do with the code under test.
+    """
+    return f"gateway api probe {uuid.uuid4()} explain consistent hashing"
+
+
 def test_health_reports_backend(client):
     body = client.get("/health").json()
     assert body["status"] == "ok"
     assert body["backend"] in {"redis", "memory"}
 
 
-def test_first_call_misses_then_second_hits(client):
-    prompt = "unique gateway api test prompt about consistent hashing"
-    first = client.post("/v1/complete", json={"prompt": prompt}).json()
+def test_first_call_misses_then_second_hits(client, fresh_prompt):
+    first = client.post("/v1/complete", json={"prompt": fresh_prompt}).json()
     assert first["cached"] is False
     assert first["tokens"] == 42
+    assert client.stub.calls == 1
 
-    second = client.post("/v1/complete", json={"prompt": prompt}).json()
+    second = client.post("/v1/complete", json={"prompt": fresh_prompt}).json()
     assert second["cached"] is True
     assert second["cache_tier"] == "exact"
+    assert client.stub.calls == 1, "a cache hit must not reach the provider"
 
 
-def test_metrics_endpoint_exposes_prometheus_format(client):
-    client.post("/v1/complete", json={"prompt": "metrics probe prompt"})
+def test_metrics_endpoint_exposes_prometheus_format(client, fresh_prompt):
+    client.post("/v1/complete", json={"prompt": fresh_prompt})
     text = client.get("/metrics").text
     assert "infergate_requests_total" in text
     assert "infergate_request_latency_seconds" in text
 
 
-def test_stats_endpoint_tracks_hit_rate(client):
-    prompt = "stats probe prompt about write ahead logs"
-    client.post("/v1/complete", json={"prompt": prompt})
-    client.post("/v1/complete", json={"prompt": prompt})
+def test_stats_endpoint_tracks_hit_rate(client, fresh_prompt):
+    client.post("/v1/complete", json={"prompt": fresh_prompt})
+    client.post("/v1/complete", json={"prompt": fresh_prompt})
     stats = client.get("/stats").json()
     assert stats["requests"] >= 2
     assert stats["cache_hits"] >= 1
