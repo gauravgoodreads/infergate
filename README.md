@@ -245,7 +245,3 @@ rate-limit isolation, and the HTTP surface.
 ```bash
 pytest
 ```
-
-## Licence
-
-MIT
